@@ -1,17 +1,30 @@
 # Contributing Guidelines
 
-Thank you for your interest in contributing to our project. Whether it's a bug report, new feature, correction, or additional
+Thank you for your interest in contributing to our project. Whether it's a bug report, new feature, correction, or additional 
 documentation, we greatly value feedback and contributions from our community.
 
-Please read through this document before submitting any issues or pull requests to ensure we have all the necessary
+Please read through this document before submitting any issues or pull requests to ensure we have all the necessary 
 information to effectively respond to your bug report or contribution.
 
+## Index
 
-## Reporting Bugs/Feature Requests
+* [Introduction](#introduction)
+  * [Reporting Bugs/Feature Requests](#reporting-bugsfeature-requests)
+  * [Contributing via Pull Requests](#contributing-via-pull-requests)
+  * [Finding contributions to work on](#finding-contributions-to-work-on)
+  * [Code of Conduct](#code-of-conduct)
+  * [Security issue notifications](#security-issue-notifications)
+  * [Licensing](#licensing)
+* [Prerequisites](#prerequisites)
+* [Working with CloudFormation](#working-with-cloudformation)
+
+## Introduction
+
+### Reporting Bugs/Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
 
-When filing an issue, please check existing open, or recently closed, issues to make sure somebody else hasn't already
+When filing an issue, please check [existing open](https://github.com/aws-samples/amazon-lookout-for-vision-demo/issues), or [recently closed](https://github.com/aws-samples/amazon-lookout-for-vision-demo/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20), issues to make sure somebody else hasn't already 
 reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
 
 * A reproducible test case or series of steps
@@ -36,24 +49,35 @@ To send us a pull request, please:
 5. Send us a pull request, answering any default questions in the pull request interface.
 6. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
-GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and
+GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/) and 
 [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
 
-## Finding contributions to work on
-Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
+### Finding contributions to work on
+Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any ['help wanted'](TODO) issues is a great place to start. 
 
 
-## Code of Conduct
-This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
-For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq) or contact
+### Code of Conduct
+This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct). 
+For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq) or contact 
 opensource-codeofconduct@amazon.com with any additional questions or comments.
 
 
-## Security issue notifications
+### Security issue notifications
 If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
 
 
-## Licensing
+### Licensing
 
-See the [LICENSE](LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+See the [LICENSE](TODO) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+
+## Prerequisites
+
+The following applications/tools/frameworks are required to contribute:
+
+* [Python](https://www.python.org/downloads/) >=v3.7
+* [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+## Working with CloudFormation
+
+The CloudFormation source code is located inside the template.yml file 

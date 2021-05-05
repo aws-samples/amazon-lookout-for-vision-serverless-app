@@ -1,0 +1,727 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Serverless application for anomaly detection using Amazon Lookout for Vision, inference results storage and analytics and notifications 
+Transform:
+- AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    AutoPublishAlias: live
+    Timeout: 15
+    Environment:
+      Variables:
+        REGION: !Ref AWS::Region
+        VERSION: "0.1"
+
+  Api:
+    # Allows any site to call these APIs (can restrict by replacing asterisk with site name)
+    # Automatically adds AllowMethods with a list of methods for this API
+    EndpointConfiguration: REGIONAL      
+    Cors:
+      AllowMethods: "'OPTIONS,GET'"
+      AllowHeaders: "'Content-Type'"
+      AllowOrigin: "'*'" 
+    Auth:
+      DefaultAuthorizer: LambdaTokenAuthorizer 
+      Authorizers:
+        LambdaTokenAuthorizer:
+          FunctionArn: !GetAtt APIGatewayCustomAuthorizerFunction.Arn
+          FunctionPayloadType: TOKEN
+          Identity:
+            Header: authorizationToken
+            ReauthorizeEvery: 60
+
+
+Parameters:
+  ResourcePrefix:
+    Description: AWS Resources are named based on the value of this parameter. You must customise this if you are launching more than one instance of the stack within the same account.
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_]*$
+  
+  LookoutProjectName:
+    Description: Lookout For Vision - Project name 
+    Type: String
+  
+  LookoutModelVersion:
+    Description: Lookout For Vision - Model version of the specified project
+    Type: String
+    Default: '1'
+  
+  ConfidenceThresholdForAlerts:
+    Description: Threshold [0.00 - 1.00] for alerting on low confidence inference results
+    Type: String
+    Default: '0.20'
+
+  AlertsEmailAddress:
+    Description: Email address for notifications for anomaly detection alarms
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+
+  ImageFileExtension:
+    Description: Image file extension type - Lookout for Vision supports jpeg/jpg/png only
+    Type: String
+    Default: jpeg
+    AllowedValues:
+      - jpeg
+      - png
+      - jpg
+
+Resources:
+  SourceImagesS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${ResourcePrefix}-source-images
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders:
+            - "*"
+          AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - DELETE
+            - HEAD
+          AllowedOrigins:
+            - "*"
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+
+  DefectsResultsS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${ResourcePrefix}-defects-results
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  S3UploaderFunction:
+    # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
+    Properties:
+      Description: Generates presigned urls for S3 to allow image uploads.
+      FunctionName: !Sub ${ResourcePrefix}-s3-getsignedurl
+      CodeUri: ./functions/S3UploaderFunction/
+      Handler: app.handler
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Tracing: Active
+      Environment:
+        Variables:
+          UploadBucket: !Ref SourceImagesS3Bucket
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref SourceImagesS3Bucket
+      Events:
+        HttpPost:
+          Type: Api
+          Properties:
+            Path: /getsignedurl
+            Method: get
+            RequestParameters:
+              - method.request.querystring.cameraid:
+                  Required: true
+              - method.request.querystring.assemblylineid:
+                  Required: true
+              - method.request.querystring.imageid:
+                  Required: true
+  
+  APIGatewayCustomAuthorizerFunction:
+      Type: AWS::Serverless::Function 
+      Properties:
+        Description: Custom authorizer for use with API Gateway
+        FunctionName: !Sub ${ResourcePrefix}-apigw-custom-authorizer
+        CodeUri: ./functions/ApiGwCustomAuthorizer/
+        Handler: app.handler
+        Runtime: nodejs12.x
+        MemorySize: 128
+  
+  CreateManifestFileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Creates a manifest file for Quicksight in the results S3 bucket
+      CodeUri: ./functions/CreateManifestFileInS3/
+      FunctionName: !Sub ${ResourcePrefix}-create-manifest-file-in-s3
+      Handler: lambda_function.handler
+      Runtime: python3.7
+      MemorySize: 128
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:PutObject'
+                - 's3:DeleteObject'
+              Resource: !Sub 'arn:aws:s3:::${DefectsResultsS3Bucket}/manifest.json'
+
+  S3EventNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Creates a S3 event notification to trigger a lambda when images are uploaded
+      CodeUri: ./functions/CreateS3BucketNotification /
+      FunctionName: !Sub ${ResourcePrefix}-create-s3-event-notification
+      Handler: lambda_function.handler
+      Runtime: python3.7
+      MemorySize: 128
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:GetBucketNotification'
+                - 's3:PutBucketNotification'
+              Resource: !Sub 'arn:aws:s3:::${SourceImagesS3Bucket}'
+
+  DynamoDbToFirehoseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Reads records from DynamoDB and puts them in Kinesis Firehose
+      CodeUri: ./functions/DynamoDbToFirehose/
+      FunctionName: !Sub ${ResourcePrefix}-dynamodb-to-firehose
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.7
+      MemorySize: 128
+      Timeout: 30
+      Environment:
+        Variables:
+          DeliveryStreamName: !Ref KinesisFirehoseDeliveryStream
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 
+                - firehose:PutRecord
+                - firehose:PutRecordBatch
+                - firehose:UpdateDestination
+              Resource: !GetAtt KinesisFirehoseDeliveryStream.Arn
+            - Effect: Allow
+              Action:
+                - 'dynamodb:DescribeStream'
+                - 'dynamodb:GetRecords'
+                - 'dynamodb:GetShardIterator'
+                - 'dynamodb:ListStreams'
+              Resource: !GetAtt DefectsResultsTable.StreamArn
+
+  DefectsResultsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - 
+          AttributeName: "CameraId"
+          AttributeType: "S"
+        - 
+          AttributeName: "DateTime"
+          AttributeType: "S"
+
+      KeySchema:
+        - 
+          AttributeName: "CameraId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "DateTime"
+          KeyType: "RANGE"
+      TableName: !Sub ${ResourcePrefix}-defectsresults-db
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification: 
+        StreamViewType: NEW_IMAGE
+
+  DynamoDbToLambdaEventSourceMapping: 
+    Type: "AWS::Lambda::EventSourceMapping"
+    Properties: 
+      EventSourceArn: !GetAtt DefectsResultsTable.StreamArn
+      FunctionName: !GetAtt DynamoDbToFirehoseFunction.Arn
+      StartingPosition: "TRIM_HORIZON"
+
+##CustomResources  
+  CreateManifestFile:
+    Type: 'Custom::CreateManifestFile'
+    Properties:
+      ServiceToken: !GetAtt CreateManifestFileFunction.Arn
+      BucketName: !Ref DefectsResultsS3Bucket
+      Prefix: !Sub 'https://${DefectsResultsS3Bucket}.s3-${AWS::Region}.amazonaws.com/defect-detection-results/' 
+      ManifestFileName: 'manifest.json'
+
+  S3ToLambdaTrigger:
+    Type: 'Custom::LambdaTrigger'
+    DependsOn: LambdaInvokePermissionForStateMachine
+    Properties:
+      ServiceToken: !GetAtt S3EventNotificationFunction.Arn
+      LambdaArn: !GetAtt StartStateMachineLambda.Arn 
+      Bucket: !Ref SourceImagesS3Bucket
+      Suffix: !Ref ImageFileExtension 
+
+
+  KinesisFirehoseDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+      DeliveryStreamName: !Sub ${ResourcePrefix}-defectsresults-delivery-stream
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !GetAtt DefectsResultsS3Bucket.Arn
+        BufferingHints: 
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        CompressionFormat: UNCOMPRESSED
+        Prefix: defect-detection-results/
+        CloudWatchLoggingOptions: 
+            Enabled: true
+            LogGroupName: "KinesisFirehoseDeliveryStreamLogs"
+            LogStreamName: !Sub ${ResourcePrefix}-defectsresults-delivery-stream
+        RoleARN: !GetAtt KinesisFirehoseDeliveryStreamRole.Arn
+
+  KinesisFirehoseDeliveryStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - firehose.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${ResourcePrefix}-deliverystream-role-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - s3:AbortMultipartUpload
+                  - s3:GetBucketLocation
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:ListBucketMultipartUploads
+                  - s3:PutObject
+                Resource:
+                  - !GetAtt DefectsResultsS3Bucket.Arn
+                  - !Sub ${DefectsResultsS3Bucket.Arn}/*
+
+
+  DefectsNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: !Ref AlertsEmailAddress
+          Protocol: "email"
+      TopicName: !Sub ${ResourcePrefix}-detect-anomalies-topic
+
+  DetectAnomaliesAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties: 
+      AlarmActions: 
+        - !Ref DefectsNotificationTopic
+      AlarmDescription: Alarm for detect anomalies results
+      AlarmName: !Sub ${ResourcePrefix}-detect-anomalies-alarm
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      EvaluationPeriods: 1
+      MetricName: DetectedAnomalyCount
+      Namespace: AWS/LookoutVision
+      Dimensions:
+        - Name: "ProjectName"
+          Value: !Ref LookoutProjectName
+        - Name: "ModelVersion"
+          Value: !Ref LookoutModelVersion 
+      Period: 60
+      Statistic: Sum
+      Threshold: 1
+      TreatMissingData: notBreaching
+      Unit: Count
+
+  DetectAnomaliesDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties: 
+      DashboardName: !Sub ${ResourcePrefix}-detect-anomalies-dashboard
+      DashboardBody: !Sub
+          '{
+            "widgets": [
+                {
+                    "type": "metric",
+                     "x": 0,
+                     "y": 3,
+                     "width": 24,
+                     "height": 9,
+                    "properties": {
+                        "view": "timeSeries",
+                        "stacked": false,
+                        "metrics": [
+                            [ "AWS/LookoutVision", "DetectedAnomalyCount", "ProjectName", "${LookoutProjectName}", "ModelVersion", "${LookoutModelVersion}" ]
+                        ],
+                        "region": "${AWS::Region}",
+                        "stat": "Sum",
+                        "period": 60
+                    }
+                },
+                {
+                  "height": 3,
+                  "width": 6,
+                  "y": 0,
+                  "x": 18,
+                  "type": "alarm",
+                  "properties": {
+                      "title": "",
+                      "alarms": [
+                          "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:${DetectAnomaliesAlarm}"
+                      ]
+                  }
+                },
+                {
+                    "type": "metric",
+                    "x": 0,
+                    "y": 0,
+                    "width": 18,
+                    "height": 3,
+                    "properties": {
+                        "metrics": [
+                            [ "AWS/LookoutVision", "DetectedAnomalyCount", "ProjectName", "${LookoutProjectName}", "ModelVersion", "${LookoutModelVersion}" ],
+                            [ ".", "ProcessedImageCount", ".", ".", ".", "." ],
+                            [ ".", "SuccessfulRequestCount", ".", ".", ".", "." ],
+                            [ ".", "Time", ".", ".", ".", ".", { "stat": "Average" } ],
+                            [ ".", "ErrorCount", ".", ".", ".", "." ],
+                            [ ".", "InvalidImageCount", ".", ".", ".", "." ]
+                        ],
+                        "view": "singleValue",
+                        "region": "${AWS::Region}",
+                        "stat": "Sum",
+                        "period": 86400,
+                        "setPeriodToTimeRange": true,
+                        "liveData": true
+                    }
+                },
+                {
+                    "height": 6,
+                    "width": 24,
+                    "y": 12,
+                    "x": 0,
+                    "type": "metric",
+                    "properties": {
+                        "metrics": [
+                            [ "AWS/States", "ExpressExecutionMemory", "StateMachineArn", "${DetectAnomaliesStateMachine}", { "stat": "Average" } ],
+                            [ ".", "ExecutionTime", ".", ".", { "stat": "Average" } ],
+                            [ ".", "ExpressExecutionBilledDuration", ".", ".", { "stat": "Average" } ],
+                            [ ".", "ExpressExecutionBilledMemory", ".", ".", { "stat": "Average" } ],
+                            [ ".", "ExecutionsSucceeded", ".", "." ],
+                            [ ".", "ExecutionsFailed", ".", "." ],
+                            [ ".", "ExecutionsTimedOut", ".", "." ],
+                            [ ".", "ExecutionsStarted", ".", "." ],
+                            [ ".", "ExecutionsAborted", ".", "." ]
+                        ],
+                        "view": "singleValue",
+                        "region": "${AWS::Region}",
+                        "period": 86400,
+                        "stat": "Sum",
+                        "title": "Defect Detection Workflow Metrics",
+                        "liveData": true,
+                        "setPeriodToTimeRange": true
+                    }
+                },
+                {
+                  "height": 6,
+                  "width": 12,
+                  "y": 12,
+                  "x": 0,
+                  "type": "metric",
+                  "properties": {
+                      "metrics": [
+                          [ "AWS/SNS", "NumberOfNotificationsDelivered", "TopicName", "${ResourcePrefix}-detect-anomalies-topic" ],
+                          [ ".", "NumberOfNotificationsFailed", ".", "." ],
+                          [ ".", "NumberOfMessagesPublished", ".", "." ]
+                      ],
+                      "view": "singleValue",
+                      "region": "${AWS::Region}",
+                      "period": 86400,
+                      "stat": "Sum",
+                      "liveData": true,
+                      "setPeriodToTimeRange": true
+                  }
+                },
+                {
+                  "height": 6,
+                  "width": 12,
+                  "y": 12,
+                  "x": 12,
+                  "type": "metric",
+                  "properties": {
+                      "metrics": [
+                          [ { "expression": "m1/m2*100", "label": "AnomalyPercentage", "id": "e1", "region": "${AWS::Region}" } ],
+                          [ "AWS/LookoutVision", "DetectedAnomalyCount", "ProjectName", "${LookoutProjectName}", "ModelVersion", "${LookoutModelVersion}", { "id": "m1", "visible": false } ],
+                          [ ".", "ProcessedImageCount", ".", ".", ".", ".", { "id": "m2", "visible": false } ]
+                      ],
+                      "view": "timeSeries",
+                      "region": "${AWS::Region}",
+                      "period": 86400,
+                      "stat": "Sum",
+                      "setPeriodToTimeRange": true,
+                      "liveData": true,
+                      "stacked": true,
+                      "yAxis": {
+                          "left": {
+                              "label": "",
+                              "min": 0,
+                              "max": 100,
+                              "showUnits": false
+                          }
+                      },
+                      "title": "AnomalyPercentage"
+                  }
+                },
+                {
+                  "height": 6,
+                  "width": 6,
+                  "y": 18,
+                  "x": 0,
+                  "type": "metric",
+                  "properties": {
+                      "metrics": [
+                          [ { "expression": "m1/m2*100", "label": "Anomalous", "id": "e1", "color": "#d62728" } ],
+                          [ { "expression": "100-e1", "label": "Non-anomalous", "id": "e2", "color": "#2ca02c" } ],
+                          [ "AWS/LookoutVision", "DetectedAnomalyCount", "ProjectName", "${LookoutProjectName}", "ModelVersion", "${LookoutModelVersion}", { "id": "m1", "color": "#d62728", "visible": false } ],
+                          [ ".", "ProcessedImageCount", ".", ".", ".", ".", { "id": "m2", "color": "#2ca02c", "visible": false } ]
+                      ],
+                      "view": "pie",
+                      "region": "${AWS::Region}",
+                      "stat": "Sum",
+                      "period": 86400,
+                      "title": "Anomalous vs Non-anomalous",
+                      "setPeriodToTimeRange": true,
+                      "liveData": true
+                  }
+                }
+            ]
+          }'
+
+  DetectAnomaliesStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Type: EXPRESS
+      Definition: 
+        StartAt: DetectAnomalies
+        States:
+          DetectAnomalies:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Retry:
+            - ErrorEquals:
+              - States.TaskFailed
+              IntervalSeconds: 1
+              MaxAttempts: 5
+              BackoffRate: 2
+            Catch:
+            - ErrorEquals:
+              - States.TaskFailed
+              Next: Failed
+            Parameters:
+              FunctionName: !GetAtt DetectAnomaliesFunction.Arn
+              Payload:
+                Input.$: "$"
+            Next: PutResultInDynamoDb
+          PutResultInDynamoDb:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Retry:
+            - ErrorEquals:
+              - States.TaskFailed
+              IntervalSeconds: 1
+              MaxAttempts: 2
+              BackoffRate: 2
+            Catch:
+            - ErrorEquals:
+              - States.TaskFailed
+              Next: Failed
+            Parameters:
+              FunctionName: !GetAtt PutItemInDynamoDbFunction.Arn
+              Payload:
+                Input.$: "$"
+            Next: PublishMessageToSNS
+          PublishMessageToSNS:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Retry:
+            - ErrorEquals:
+              - States.TaskFailed
+              IntervalSeconds: 1
+              MaxAttempts: 2
+              BackoffRate: 2
+            Catch:
+            - ErrorEquals:
+              - States.TaskFailed
+              Next: Failed
+            Parameters:
+              FunctionName: !GetAtt PublishAlertMessageToSnsTopicFunction.Arn
+              Payload:
+                Input.$: "$"
+            Next: Success
+          Success:
+            Type: Succeed
+          Failed:
+            Type: Fail
+
+      Name: !Sub ${ResourcePrefix}-detect-anomalies-state-machine
+      Role: !GetAtt StatesExecutionRole.Arn
+    Tracing:
+      Enabled: True
+
+  StatesExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: 
+                  - !GetAtt DetectAnomaliesFunction.Arn
+                  - !GetAtt PutItemInDynamoDbFunction.Arn
+                  - !GetAtt PublishAlertMessageToSnsTopicFunction.Arn
+
+  LambdaInvokePermissionForStateMachine:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt StartStateMachineLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:s3:::${SourceImagesS3Bucket}'
+
+  StartStateMachineLambda:
+    DependsOn: 
+      - SourceImagesS3Bucket
+      - S3UploaderFunction
+      - DefectsResultsTable
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: startStateMachineExecution.lambda_handler
+      Runtime: python3.7
+      FunctionName: !Sub ${ResourcePrefix}-start-state-machine
+      CodeUri: ./functions/DetectAnomaliesFunction/
+      Description: Starts anomaly detection state machine
+      MemorySize: 128
+      Timeout: 5
+      Tracing: Active
+      Environment:
+        Variables:
+          REGION: !Sub ${AWS::Region}
+          STATE_MACHINE_ARN: !Ref DetectAnomaliesStateMachine
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'states:StartExecution'
+              Resource: !Ref DetectAnomaliesStateMachine 
+
+  DetectAnomaliesFunction:
+    DependsOn: 
+      - SourceImagesS3Bucket
+      - S3UploaderFunction
+      - DefectsResultsTable
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: startDetectAnomalies.lambda_handler
+      Runtime: python3.7
+      FunctionName: !Sub ${ResourcePrefix}-start-detect-anomalies
+      CodeUri: ./functions/DetectAnomaliesFunction/
+      Description: Uses Lookout For Vision APIs to classify an image as anomalous or not and stores the results received in DynamoDB.
+      MemorySize: 384
+      Timeout: 5
+      Tracing: Active
+      Environment:
+        Variables:
+          LFV_PROJECT_NAME: !Ref LookoutProjectName
+          LFV_MODEL_VERSION: !Ref LookoutModelVersion
+          REGION: !Sub ${AWS::Region}
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:GetObject'
+              Resource: !Sub 'arn:aws:s3:::${SourceImagesS3Bucket}/*'
+            - Effect: Allow
+              Action:
+                - 'lookoutvision:DetectAnomalies'
+              Resource: !Sub arn:aws:lookoutvision:${AWS::Region}:${AWS::AccountId}:model/${LookoutProjectName}/${LookoutModelVersion}
+
+  PutItemInDynamoDbFunction:
+    DependsOn: 
+      - SourceImagesS3Bucket
+      - S3UploaderFunction
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: putItemInDynamoDb.lambda_handler
+      Runtime: python3.7
+      FunctionName: !Sub ${ResourcePrefix}-putitem-in-dynamodb
+      CodeUri: ./functions/DetectAnomaliesFunction/
+      Description: Stores anomaly detection results in DynamoDB
+      MemorySize: 384
+      Timeout: 5
+      Tracing: Active
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref DefectsResultsTable
+          REGION: !Sub ${AWS::Region}
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'dynamodb:PutItem'
+              Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DefectsResultsTable}
+
+  PublishAlertMessageToSnsTopicFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: publishMessage.lambda_handler
+      Runtime: python3.7
+      FunctionName: !Sub ${ResourcePrefix}-publish-message-to-sns
+      CodeUri: ./functions/DetectAnomaliesFunction/
+      Description: Publish message to SNS if a defect is detected
+      MemorySize: 384
+      Timeout: 5
+      Tracing: Active
+      Environment:
+        Variables:
+          TARGET_ARN: !Ref DefectsNotificationTopic
+          REGION: !Sub ${AWS::Region}
+          CONFIDENCE_THRESHOLD: !Ref ConfidenceThresholdForAlerts
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'sns:Publish'
+              Resource: !Ref DefectsNotificationTopic
+
+
+Outputs:
+  S3SourceImagesBucketName:
+    Description: S3 bucket for Images uploaded by the cameras
+    Value: !Ref SourceImagesS3Bucket
+  DefectsResultsS3BucketName:
+    Description: S3 bucket for Defects Results returned by Lookout For Vision
+    Value: !Ref DefectsResultsS3Bucket
+  DefectsResultsManifestFileURI:
+    Description: Manifest file to use with QuickSight
+    Value: !Sub s3://${DefectsResultsS3Bucket}/manifest.json
+  DynamoDBTableName:
+    Description: DynamoDB Table for Defects Results returned by Lookout For Vision
+    Value: !Ref DefectsResultsTable
+  Api:
+    Description: API for getting signed URL for uploading images to S3
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/getsignedurl
