@@ -14,6 +14,9 @@ Features:
 * Inference results storage using Amazon DynamoDB
 * Notifications using Amazon SNS
 * Monitoring & Alerting using Amazon CloudWatch
+
+For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vision/)
+
 ---------------
 ### Index
 
@@ -24,8 +27,8 @@ Features:
   * [Deployment](#deployment)
   * [Deployment using SAM CLI](#deployment-using-sam-cli)
   * [Deploy Management Front End](#deploy-management-front-end)
-  * [Setup Quicksight Dashboard](#setup-quicksight-dashboard)
   * [Testing](#testing)
+  * [Setup Quicksight Dashboard](#setup-quicksight-dashboard)
 * [Removing the demo application](#removing-the-demo-application)
 * [Making changes to the code and customization](#making-changes-to-the-code-and-customization)
 * [Contributing](#contributing)
@@ -67,7 +70,7 @@ Anomaly detection and low-confidence inference results trigger an email notifica
 Monitoring the state of the workload is managed via CloudWatch - as part of the solution, a dashboard is created which provides a single pane of glass for all metrics related to Lookout For Vision model as well as the Step Functions workflow. Additionally, an alarm is created whihc triggers whenever detected anomalies exceed a threshold and send sends an email notification via SNS.
 
 
-#### What's Here
+### What's Here
 ---------------
 
 This sample includes:
@@ -111,7 +114,7 @@ terminal> aws s3 cp --recursive your-repository-folder/resources/images s3://you
 
 10. Get started with Amazon Lookout For Vision - Setup project, create dataset and train model. In your AWS account, train a model in Lookout For Vision using the dataset in *../resources/images/* or from your own custom dataset. Refer to steps [here](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/getting-started.html) or watch videos [here](https://aws.amazon.com/lookout-for-vision/resources/)
 
-
+---------------
 #### Deployment
 ---------------
 The demo application is deployed as an [AWS CloudFormation](https://aws.amazon.com/cloudformation) template.
@@ -165,7 +168,7 @@ You are responsible for the cost of the AWS services used while running this sam
 10. Note the *url* displayed in the *Outputs* tab for the stack. This is used to request for S3 signed Url to upload an image. The url will be used later in the 'Testing' section.
 11. Check the inbox for the 'AlertsEmailAddress' passed as a parameter for an email from Amazon SNS to confirm subscription. Confirm subscription by accessing the link in the email to receive defect detection emails.
 
-
+---------------
 #### Deployment using SAM CLI
 ---------------
 
@@ -204,6 +207,7 @@ Provide the parameter values as you are prompted to proceed through the provisio
 **Troubleshooting**
 If you run into an issue where the resources are not created, or the stack rolls back - then please ensure you are using a random value for the *ResourcePrefix* parameter
 
+---------------
 #### Deploy Management Front End
 ---------------
 
@@ -211,18 +215,7 @@ If you run into an issue where the resources are not created, or the stack rolls
 2. Once deployed, Sign Up via the front end and login.
 3. Start the model trained in Lookout For Vision.
 
-
-#### Setup Quicksight Dashboard
 ---------------
-1. To setup QuickSight dashboard for the inference results, subscribe to a standard account via the AWS Console.
-
-2. Grant permissions to QuickSight to access the S3 bucket that stores the inference results. 
-
-3. Create a dataset by  specifying the manifest.json file uri stored in the same S3 bucket.
-
-4. Once dataset is imported, you can build visualizations as required and schedule dataset refresh.
-
-Note: Check output of the CloudFromation stack provisioned previously to identify the bucket and the manifest file URI.
 #### Testing
 ---------------
 **Ensure you have Python>=v3.7 installed before proceeding**
@@ -265,6 +258,19 @@ sh /path/to/test.sh
 
 ```
 
+#### Setup Quicksight Dashboard
+---------------
+1. To setup QuickSight dashboard for the inference results, subscribe to a standard account via the AWS Console.
+
+2. Grant permissions to QuickSight to access the S3 bucket that stores the inference results. 
+
+3. Create a dataset by  specifying the manifest.json file uri stored in the same S3 bucket.
+
+4. Once dataset is imported, you can build visualizations as required and schedule dataset refresh.
+
+Note: Check output of the CloudFromation stack provisioned previously to identify the bucket and the manifest file URI.
+
+
 ### Removing the demo application
 
 To remove the demo application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
@@ -275,10 +281,6 @@ Ensure that S3 buckets are empty before removing the application stack.
 Follow similar process for removing the management front end.
 
 Quicksight dashboards and datasets can be deleted manually.
-
-### Making changes to the code and customization
-
-The [contributing guidelines](CONTRIBUTING.md) contain instructions about how to run the front-end locally and make changes to the backend stack.
 
 ## Contributing
 
