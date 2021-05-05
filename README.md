@@ -30,8 +30,10 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
   * [Testing](#testing)
   * [Setup Quicksight Dashboard](#setup-quicksight-dashboard)
 * [Removing the demo application](#removing-the-demo-application)
-* [Making changes to the code and customization](#making-changes-to-the-code-and-customization)
 * [Contributing](#contributing)
+* [Security](#security)
+* [License Summary](#license-summary)
+* [What Do I do Next?](#what-do-i-do-next?)
 ---------------
 ### Architecture
 
@@ -257,7 +259,7 @@ Alternatively, you can also update the parameters in *test.sh* file and execute 
 sh /path/to/test.sh
 
 ```
-
+---------------
 #### Setup Quicksight Dashboard
 ---------------
 1. To setup QuickSight dashboard for the inference results, subscribe to a standard account via the AWS Console.
@@ -270,9 +272,9 @@ sh /path/to/test.sh
 
 Note: Check output of the CloudFromation stack provisioned previously to identify the bucket and the manifest file URI.
 
-
+---------------
 ### Removing the demo application
-
+---------------
 To remove the demo application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
 
 Important Note: 
@@ -294,7 +296,7 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
-#### What Do I Do Next?
+## What Do I Do Next?
 
 If you have checked out a local copy of your repository you can start making changes
 to the sample code and template. 
