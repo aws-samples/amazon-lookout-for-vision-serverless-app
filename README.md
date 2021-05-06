@@ -186,8 +186,7 @@ To work on the sample code, you'll need to clone your project's repository to yo
 3. Create a S3 Bucket for storing artefacts e.g. lambda code etc.
 4. Deploy the template using SAM CLI commands - run the [sam deploy](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html) command in the project root folder. 
 
-**Important Notes**
-When replacing the parameters in the command below:
+**Important Notes** - when replacing the parameters in the command below:
 * ensure that the **ResourcePrefix** parameter value is unique for each stack if you want to provision multiple stacks in the same account
 * region parameter should be where the Lookout For Vision model has been deployed.
 
@@ -259,7 +258,6 @@ your-repository-folder> python3 scripts/uploadImages.py resources/images/extra_i
 Alternatively, you can also update the parameters in *test.sh* file and execute it via terminal/command prompt
 ```
 sh /path/to/test.sh
-
 ```
 ---------------
 #### Setup Quicksight Dashboard
