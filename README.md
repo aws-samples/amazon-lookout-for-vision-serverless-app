@@ -19,6 +19,7 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
 
 ---------------
 ### Index
+---------------
 
 * [Architecture](#architecture)
 * [What's Here](#whats-here)
@@ -36,6 +37,7 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
 * [What Do I do Next?](#what-do-i-do-next?)
 ---------------
 ### Architecture
+---------------
 
 <p align="center">
   <img src="docs/architecture.jpg" alt="Architecture Diagram" />
@@ -89,7 +91,9 @@ This sample includes:
    
 * scripts/ - script files for testing functionality
 
+---------------
 ### Usage
+---------------
 #### Prerequisites
 ---------------
 
