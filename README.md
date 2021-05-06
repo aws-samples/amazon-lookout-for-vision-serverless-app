@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="docs/lvlogo.png" alt="Amazon Lookout for Vision Demo Logo" />
+  <img src="docs/lvlogo.png" alt="Amazon Lookout for Vision Logo" />
 </p>
-<h1 align="center">Serverless Defect Detection using Amazon Lookout for Vision Demo</h1>
+<h1 align="center">Detect manufacturing defects in real time using Amazon Lookout for Vision</h1>
 
 [Amazon Lookout for Vision](https://aws.amazon.com/lookout-for-vision/) is a machine learning (ML) service that spots defects and anomalies in visual representations using computer vision (CV). With Amazon Lookout for Vision, manufacturing companies can increase quality and reduce operational costs by quickly identifying differences in images of objects at scale. For example, Amazon Lookout for Vision can be used to identify missing components in products, damage to vehicles or structures, irregularities in production lines, miniscule defects in silicon wafers, and other similar problems. Amazon Lookout for Vision uses ML to see and understand images from any camera as a person would, but with an even higher degree of accuracy and at a much larger scale. Amazon Lookout for Vision allows customers to eliminate the need for costly and inconsistent manual inspection, while improving quality control, defect and damage assessment, and compliance. In minutes, you can begin using Amazon Lookout for Vision to automate inspection of images and objects–with no machine learning expertise required.
 
@@ -186,7 +186,6 @@ To work on the sample code, you'll need to clone your project's repository to yo
 **Important Notes**
 When replacing the parameters in the command below:
 * ensure that the **ResourcePrefix** parameter value is unique for each stack if you want to provision multiple stacks in the same account
-* the ResourcePrefix 
 * region parameter should be where the Lookout For Vision model has been deployed.
 
 ```
@@ -207,7 +206,7 @@ your-repository-folder> sam deploy --guided
 Provide the parameter values as you are prompted to proceed through the provisioning process.
 
 **Troubleshooting**
-If you run into an issue where the resources are not created, or the stack rolls back - then please ensure you are using a random value for the *ResourcePrefix* parameter
+If you run into an issue where the resources are not created, or the stack rolls back - then please ensure you are using a random value for the *ResourcePrefix* parameter.
 
 ---------------
 #### Deploy Management Front End
