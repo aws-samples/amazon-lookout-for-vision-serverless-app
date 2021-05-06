@@ -79,15 +79,15 @@ Monitoring the state of the workload is managed via CloudWatch - as part of the 
 
 This sample includes:
 
-* README.md - this file
-* functions/ - contains all Lambda functions source code
-* template.yml - this file contains the AWS Serverless Application Model (AWS SAM) template used by AWS CloudFormation to deploy the application.
-* resources/images/ - contains images for model training and testing
-   * resources/images/train/anomaly - contains anomaly images for model training - 200 images
-   * resources/images/train/normal - contains normal images for model training - 200 images
-   * resources/images/test/anomaly - contains anomaly images for model testing - 100 images
-   * resources/images/test/normal - contains normal images for model testing - 100 images
-   * resources/images/extra_images - contains additional images to use for testing using script - 30 normal, 30 anomalous
+* `README.md` - this file
+* `functions/` - contains all Lambda functions source code
+* `template.yml` - this file contains the AWS Serverless Application Model (AWS SAM) template used by AWS CloudFormation to deploy the application.
+* `resources/images/` - contains images for model training and testing
+   * `resources/images/train/anomaly` - contains anomaly images for model training - 200 images
+   * `resources/images/train/normal` - contains normal images for model training - 200 images
+   * `resources/images/test/anomaly` - contains anomaly images for model testing - 100 images
+   * `resources/images/test/normal` - contains normal images for model testing - 100 images
+   * `resources/images/extra_images` - contains additional images to use for testing using script - 30 normal, 30 anomalous
    
 * scripts/ - script files for testing functionality
 
