@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/lvlogo.png" alt="Amazon Lookout for Vision Logo" />
+  <img src="docs/lvlogo-2.png" alt="Amazon Lookout for Vision Logo" />
 </p>
 <h1 align="center">Detect manufacturing defects in real time using Amazon Lookout for Vision</h1>
 
@@ -73,7 +73,7 @@ Anomaly detection and low-confidence inference results trigger an email notifica
 **Monitoring & Alerting**
 Monitoring the state of the workload is managed via CloudWatch - as part of the solution, a dashboard is created which provides a single pane of glass for all metrics related to Lookout For Vision model as well as the Step Functions workflow. Additionally, an alarm is created whihc triggers whenever detected anomalies exceed a threshold and send sends an email notification via SNS.
 
-
+---------------
 ### What's Here
 ---------------
 
@@ -81,7 +81,7 @@ This sample includes:
 
 * README.md - this file
 * functions/ - contains all Lambda functions source code
-* template.yml - this file contains the AWS Serverless Application Model (AWS SAM) used by AWS CloudFormation to deploy the application.
+* template.yml - this file contains the AWS Serverless Application Model (AWS SAM) template used by AWS CloudFormation to deploy the application.
 * resources/images/ - contains images for model training and testing
    * resources/images/train/anomaly - contains anomaly images for model training - 200 images
    * resources/images/train/normal - contains normal images for model training - 200 images
@@ -95,7 +95,6 @@ This sample includes:
 ### Usage
 ---------------
 #### Prerequisites
----------------
 
 To setup prerequisites related to Amazon Lookout For Vision, refer to this [link](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/su-set-up.html)
 
@@ -123,7 +122,7 @@ terminal> aws s3 cp --recursive your-repository-folder/resources/images s3://you
 ---------------
 #### Deployment
 ---------------
-The demo application is deployed as an [AWS CloudFormation](https://aws.amazon.com/cloudformation) template.
+The application is deployed as an [AWS CloudFormation](https://aws.amazon.com/cloudformation) template.
 
 > **Note**  
 You are responsible for the cost of the AWS services used while running this sample deployment. There is no additional cost for using this sample. For full details, see the following pricing pages for each AWS service you will be using in this sample.  Prices are subject to change.
@@ -276,7 +275,7 @@ sh /path/to/test.sh
 Note: Check output of the CloudFromation stack provisioned previously to identify the bucket and the manifest file URI.
 
 ---------------
-### Removing the demo application
+### Removing the application
 ---------------
 To remove the demo application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
 
@@ -285,7 +284,7 @@ Ensure that S3 buckets are empty before removing the application stack.
 
 Follow similar process for removing the management front end.
 
-Quicksight dashboards and datasets can be deleted manually.
+Quicksight dashboards and datasets can be deleted manually via the console.
 
 ## Contributing
 
