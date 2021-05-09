@@ -82,12 +82,12 @@ This sample includes:
 * `README.md` - this file
 * `functions/` - contains all Lambda functions source code
 * `template.yml` - this file contains the AWS Serverless Application Model (AWS SAM) template used by AWS CloudFormation to deploy the application.
-* `resources/images/` - contains images for model training and testing
-   * `resources/images/train/anomaly` - contains anomaly images for model training - 200 images
-   * `resources/images/train/normal` - contains normal images for model training - 200 images
-   * `resources/images/test/anomaly` - contains anomaly images for model testing - 100 images
-   * `resources/images/test/normal` - contains normal images for model testing - 100 images
-   * `resources/images/extra_images` - contains additional images to use for testing using script - 30 normal, 30 anomalous
+* `resources/circuitboard/` - contains images for model training and testing
+   * `resources/circuitboard/train/anomaly` - contains anomaly images for model training - 200 images
+   * `resources/circuitboard/train/normal` - contains normal images for model training - 200 images
+   * `resources/circuitboard/test/anomaly` - contains anomaly images for model testing - 100 images
+   * `resources/circuitboard/test/normal` - contains normal images for model testing - 100 images
+   * `resources/circuitboard/extra_images` - contains additional images to use for testing using script - 30 normal, 30 anomalous
    
 * scripts/ - script files for testing functionality
 
@@ -108,16 +108,16 @@ Specifically, you will need to setup the following:
 6. For local development, you can setup [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)(Optional)
 7. For testing, you require [Python](https://www.python.org/downloads/) >=v3.7
 8. Clone repository
-9. Prepare sample images - you can get started with the images in the repository (../resources/images/) or prepare your own custom labelled dataset. Refer to [link](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/su-prepare-example-images.html) for more details
+9. Prepare sample images - you can get started with the images in the repository (../resources/circuitboard/) or prepare your own custom labeled dataset. Refer to [link](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/su-prepare-example-images.html) for more details
 
 If you choose to use the dataset that is part of the repository, then execute the following command after updating details of your S3 bucket to upload the images for training the model in Amazon Lookout for Vision.
 
 ```
-terminal> aws s3 cp --recursive your-repository-folder/resources/images s3://your-lookout-for-vision-bucket/custom-dataset/metal-casting-defects/
+terminal> aws s3 cp --recursive your-repository-folder/resources/circuitboard s3://your-lookout-for-vision-bucket/custom-dataset/circuitboard/
 ```
 
 
-10. Get started with Amazon Lookout For Vision - Setup project, create dataset and train model. In your AWS account, train a model in Lookout For Vision using the dataset in *../resources/images/* or from your own custom dataset. Refer to steps [here](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/getting-started.html) or watch videos [here](https://aws.amazon.com/lookout-for-vision/resources/)
+10. Get started with Amazon Lookout For Vision - Setup project, create dataset and train model. In your AWS account, train a model in Lookout For Vision using the dataset in *../resources/circuitboard/* or from your own custom dataset. Refer to steps [here](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/getting-started.html) or watch videos [here](https://aws.amazon.com/lookout-for-vision/resources/)
 
 ---------------
 #### Deployment
@@ -155,7 +155,7 @@ You are responsible for the cost of the AWS services used while running this sam
    * **LookoutProjectName**  Lookout For Vision Project name
    * **LookoutModelVersion**  (Default: *1*) Lookout For Vision - Model version of the specified project
    * **ConfidenceThresholdForAlerts**  (Default: *0.20*) Threshold value [0.00 - 1.00] for alerting on low confidence inference results
-   * **ImageFileExtension**  (*jpeg|png*) (Default: *jpeg*) Extension type of images that will used for inference - Lookout for Vision supports jpeg/png
+   * **ImageFileExtension**  (*jpeg|jpg|png*) (Default: *jpeg*) Extension type of images that will used for inference - Lookout for Vision supports jpeg/jpg/png
 
    When completed, click **Next**
 5. [Configure stack options](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html) if desired, then click **Next**.
@@ -236,7 +236,7 @@ Follow the steps below to test functionality:
    ```
 
 Example Inputs:
-* DIRECTORY='../resources/images/extra_images'
+* DIRECTORY='../resources/circuitboard/extra_images'
 * CAMERA_ID='CAM123456'
 * ASSEMBLY_LINE_ID='ASM123456'
 * API_ENDPOINT='https://XYZ.amazonaws.com/Prod/getsignedurl' (note that this is an output from CloudFormation stack provisioned previously)
@@ -246,13 +246,13 @@ Example Inputs:
 For *ALLOWING* authorization to upload:
 
 ```
-your-repository-folder> python3 scripts/uploadImages.py resources/images/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
+your-repository-folder> python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
 
 ```
 
 For *DENYING* authorization to upload:
 ```
-your-repository-folder> python3 scripts/uploadImages.py resources/images/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl deny 0
+your-repository-folder> python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl deny 0
 ```
 
 Alternatively, you can also update the parameters in *test.sh* file and execute it via terminal/command prompt
