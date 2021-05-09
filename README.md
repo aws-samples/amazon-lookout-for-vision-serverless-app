@@ -269,7 +269,7 @@ sh /path/to/test.sh
 
 4. Once dataset is imported, you can build visualizations as required and schedule dataset refresh.
 
-Note: Check output of the CloudFromation stack provisioned previously to identify the bucket and the manifest file URI.
+Note: Check output of the CloudFormation stack provisioned previously to identify the bucket and the manifest file URI.
 
 ---------------
 ### Removing the application
