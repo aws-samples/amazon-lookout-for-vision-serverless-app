@@ -34,7 +34,6 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
 * [Contributing](#contributing)
 * [Security](#security)
 * [License Summary](#license-summary)
-* [What Do I do Next?](#what-do-i-do-next?)
 ---------------
 ### Architecture
 ---------------
@@ -295,17 +294,5 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License Summary
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
-## What Do I Do Next?
-
-If you have checked out a local copy of your repository you can start making changes
-to the sample code and template. 
-
-
-Learn more about AWS Serverless Application Model (AWS SAM) and how it works here:
-https://github.com/awslabs/serverless-application-model/blob/master/HOWTO.md
-
-AWS Lambda Developer Guide:
-https://docs.aws.amazon.com/lambda/latest/dg/deploying-lambda-apps.html
 
 
