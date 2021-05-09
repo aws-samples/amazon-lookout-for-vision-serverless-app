@@ -82,11 +82,11 @@ This sample includes:
 * `functions/` - contains all Lambda functions source code
 * `template.yml` - this file contains the AWS Serverless Application Model (AWS SAM) template used by AWS CloudFormation to deploy the application.
 * `resources/circuitboard/` - contains images for model training and testing
-   * `resources/circuitboard/train/anomaly` - contains anomaly images for model training - 200 images
-   * `resources/circuitboard/train/normal` - contains normal images for model training - 200 images
-   * `resources/circuitboard/test/anomaly` - contains anomaly images for model testing - 100 images
-   * `resources/circuitboard/test/normal` - contains normal images for model testing - 100 images
-   * `resources/circuitboard/extra_images` - contains additional images to use for testing using script - 30 normal, 30 anomalous
+   * `resources/circuitboard/train/anomaly` - contains anomaly images for model training
+   * `resources/circuitboard/train/normal` - contains normal images for model training
+   * `resources/circuitboard/test/anomaly` - contains anomaly images for model testing
+   * `resources/circuitboard/test/normal` - contains normal images for model testing
+   * `resources/circuitboard/extra_images` - contains additional images to use for testing using script
    
 * scripts/ - script files for testing functionality
 
