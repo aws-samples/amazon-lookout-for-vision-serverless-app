@@ -30,7 +30,7 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
   * [Deploy Management Front End](#deploy-management-front-end)
   * [Testing](#testing)
   * [Setup Quicksight Dashboard](#setup-quicksight-dashboard)
-* [Removing the demo application](#removing-the-demo-application)
+* [Removing the application](#removing-the-application)
 * [Contributing](#contributing)
 * [Security](#security)
 * [License Summary](#license-summary)
@@ -212,10 +212,16 @@ If you run into an issue where the resources are not created, or the stack rolls
 ---------------
 #### Deploy Management Front End
 ---------------
+The management front end is another sample solution that provides a simple web user inteface to manage your Amazon Lookout for Vision models.
 
-1. Deploy CloudFormation template from  https://github.com/aws-samples/amazon-lookout-for-vision-demo to setup the admin front end.
-2. Once deployed, Sign Up via the front end and login.
-3. Start the model trained in Lookout For Vision.
+To get started, refer to this [link](https://github.com/aws-samples/amazon-lookout-for-vision-demo) or deploy the latest CloudFormation template by following the link below for your preferred AWS region:
+
+|Region|Launch Template|
+|------|---------------|
+|**US East (N. Virginia)** (us-east-1) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=LookoutVisionDemo&templateURL=https://solution-builders-us-east-1.s3.us-east-1.amazonaws.com/amazon-lookout-for-vision-demo/latest/template.yaml)|
+|**US East (Ohio)** (us-east-2) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=LookoutVisionDemo&templateURL=https://solution-builders-us-east-2.s3.us-east-2.amazonaws.com/amazon-lookout-for-vision-demo/latest/template.yaml)|
+|**US West (Oregon)** (us-west-2) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=LookoutVisionDemo&templateURL=https://solution-builders-us-west-2.s3.us-west-2.amazonaws.com/amazon-lookout-for-vision-demo/latest/template.yaml)|
+|**EU (Ireland)** (eu-west-1) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=LookoutVisionDemo&templateURL=https://solution-builders-eu-west-1.s3.eu-west-1.amazonaws.com/amazon-lookout-for-vision-demo/latest/template.yaml)|
 
 ---------------
 #### Testing
@@ -274,14 +280,15 @@ Note: Check output of the CloudFormation stack provisioned previously to identif
 ---------------
 ### Removing the application
 ---------------
-To remove the demo application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
+Important Note:
+* Ensure that S3 buckets are empty before removing the application stack.
+* Quicksight dashboards and datasets can be deleted manually via the console.
+* Follow similar process for removing the management front end.
 
-Important Note: 
-Ensure that S3 buckets are empty before removing the application stack.
 
-Follow similar process for removing the management front end.
+To remove the application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
 
-Quicksight dashboards and datasets can be deleted manually via the console.
+To remove the management front end, follow the steps listed [here](https://github.com/aws-samples/amazon-lookout-for-vision-demo#removing-the-demo-application)
 
 ## Contributing
 
