@@ -283,8 +283,6 @@ Note: Check output of the CloudFormation stack provisioned previously to identif
 Important Note:
 * Ensure that S3 buckets are empty before removing the application stack.
 * Quicksight dashboards and datasets can be deleted manually via the console.
-* Follow similar process for removing the management front end.
-
 
 To remove the application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
 
