@@ -64,6 +64,9 @@ Parameters:
       - jpeg
       - png
       - jpg
+      - JPEG
+      - PNG
+      - JPG
 
 Resources:
   SourceImagesS3Bucket:
