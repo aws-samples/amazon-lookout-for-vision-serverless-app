@@ -1,3 +1,13 @@
+.aws-sam
+.DS_Store
+.vscode
+functions/CreateManifestFileInS3/python
+functions/CreateS3BucketNotification/python
+functions/DetectAnomaliesFunction/python
+functions/DynamoDbToFirehose/python
+node_modules
 output.template.yml
+packaged.zip
 samconfig.toml
 scripts/packages/*
+venv
