@@ -202,7 +202,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Creates a S3 event notification to trigger a lambda when images are uploaded
-      CodeUri: ./functions/CreateS3BucketNotification /
+      CodeUri: ./functions/CreateS3BucketNotification/
       FunctionName: !Sub ${ResourcePrefix}-create-s3-event-notification
       Handler: lambda_function.handler
       Runtime: python3.7
