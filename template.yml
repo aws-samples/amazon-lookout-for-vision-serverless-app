@@ -5,7 +5,6 @@ Transform:
 
 Globals:
   Function:
-    AutoPublishAlias: live
     Timeout: 15
     Environment:
       Variables:

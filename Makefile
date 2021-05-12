@@ -24,10 +24,10 @@ setup:
 	cd ./functions/S3UploaderFunction && npm install
 
 	# python lambdas
-	cd ./functions/CreateManifestFileInS3 && pip3 install -r requirements.txt -t python --upgrade
-	cd ./functions/CreateS3BucketNotification && pip3 install -r requirements.txt -t python --upgrade
-	cd ./functions/DetectAnomaliesFunction && pip3 install -r requirements.txt -t python --upgrade
-	cd ./functions/DynamoDbToFirehose && pip3 install -r requirements.txt -t python --upgrade
+	cd ./functions/CreateManifestFileInS3 && pip3 install -r requirements.txt -t .
+	cd ./functions/CreateS3BucketNotification && pip3 install -r requirements.txt -t .
+	cd ./functions/DetectAnomaliesFunction && pip3 install -r requirements.txt -t .
+	cd ./functions/DynamoDbToFirehose && pip3 install -r requirements.txt -t .
 
 .PHONY: version
 version:

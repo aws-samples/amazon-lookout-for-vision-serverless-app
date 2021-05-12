@@ -1,13 +1,28 @@
 .aws-sam
 .DS_Store
 .vscode
-functions/CreateManifestFileInS3/python
-functions/CreateS3BucketNotification/python
-functions/DetectAnomaliesFunction/python
-functions/DynamoDbToFirehose/python
 node_modules
 output.template.yml
 packaged.zip
 samconfig.toml
 scripts/packages/*
 venv
+
+# Exclude Python Libraries
+functions/CreateManifestFileInS3/*
+functions/CreateS3BucketNotification/*
+functions/DetectAnomaliesFunction/*
+functions/DynamoDbToFirehose/*
+
+# Include Lambda Code
+!functions/CreateManifestFileInS3/lambda_function.py
+!functions/CreateManifestFileInS3/requirements.txt
+!functions/CreateS3BucketNotification/lambda_function.py
+!functions/CreateS3BucketNotification/requirements.txt
+!functions/DetectAnomaliesFunction/publishMessage.py
+!functions/DetectAnomaliesFunction/putItemInDynamoDb.py
+!functions/DetectAnomaliesFunction/startDetectAnomalies.py
+!functions/DetectAnomaliesFunction/StartStateMachineExecution.py
+!functions/DetectAnomaliesFunction/requirements.txt
+!functions/DynamoDbToFirehose/lambda_function.py
+!functions/DynamoDbToFirehose/requirements.txt
