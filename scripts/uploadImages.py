@@ -25,16 +25,16 @@ import requests
 
 # Execute as - script.py SourceDirectoryPath CameraID AssemblyLineID API_ENDPOINT AUTH_TOKEN TIME_BETWEEN_REQUESTS
 # For Example:
-# Allow Upload -> python uploadImages-args.py ../resources/images/test CAM123456 ASM123456 https://z9na8syydj.execute-api.eu-west-1.amazonaws.com/Prod/getsignedurl allow 0
-# Deny Upload -> python uploadImages-args.py ../resources/images/test CAM123456 ASM123456 https://z9na8syydj.execute-api.eu-west-1.amazonaws.com/Prod/getsignedurl deny 0
-# Different Camera ID -> python uploadImages-args.py ../resources/images/test CAM223456 ASM123456 https://z9na8syydj.execute-api.eu-west-1.amazonaws.com/Prod/getsignedurl allow 0
-# Different AssemblyLineId -> python uploadImages-args.py ../resources/images/test CAM123456 ASM223456 https://z9na8syydj.execute-api.eu-west-1.amazonaws.com/Prod/getsignedurl allow 0
+# Allow Upload -> python uploadImages-args.py ../resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
+# Deny Upload -> python uploadImages-args.py ../resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl deny 0
+# Different Camera ID -> python uploadImages-args.py ../resources/circuitboard/extra_images CAM223456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
+# Different AssemblyLineId -> python uploadImages-args.py ../resources/circuitboard/extra_images CAM123456 ASM223456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
 
 # Example Inputs:
-# DIRECTORY = '../resources/images/test'
+# DIRECTORY = '../resources/circuitboard/extra_images'
 # CAMERA_ID = 'CAM123456'
 # ASSEMBLY_LINE_ID = 'ASM123456'
-# API_ENDPOINT = 'https://z9na8syydj.execute-api.eu-west-1.amazonaws.com/Prod/getsignedurl'
+# API_ENDPOINT = 'https://XYZ.amazonaws.com/Prod/getsignedurl'
 # AUTH_TOKEN = 'allow|deny'
 # TIME_BETWEEN_REQUESTS = 3 (seconds)
 
