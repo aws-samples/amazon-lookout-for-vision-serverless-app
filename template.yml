@@ -1,11 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Serverless application for anomaly detection using Amazon Lookout for Vision, inference results storage and analytics and notifications 
+Description: Serverless application for anomaly detection using Amazon Lookout for Vision, inference results storage and analytics and notifications (uksb-1rs582j68)
 Transform:
 - AWS::Serverless-2016-10-31
 
 Globals:
   Function:
-    AutoPublishAlias: live
     Timeout: 15
     Environment:
       Variables:
@@ -64,12 +63,19 @@ Parameters:
       - jpeg
       - png
       - jpg
+      - JPEG
+      - PNG
+      - JPG
 
 Resources:
   SourceImagesS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${ResourcePrefix}-source-images
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration: 
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -88,16 +94,49 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  SourceImagesS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SourceImagesS3Bucket
+      PolicyDocument:
+        Statement:
+          - Sid: HttpsOnly
+            Action: '*'
+            Effect: Deny
+            Resource: !Sub arn:aws:s3:::${SourceImagesS3Bucket}/*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': 'false'
 
   DefectsResultsS3Bucket:
     Type: AWS::S3::Bucket
     Properties: 
       BucketName: !Sub ${ResourcePrefix}-defects-results
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration: 
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
       PublicAccessBlockConfiguration: 
         BlockPublicAcls: true
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
+  DefectsResultsS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DefectsResultsS3Bucket
+      PolicyDocument:
+        Statement:
+          - Sid: HttpsOnly
+            Action: '*'
+            Effect: Deny
+            Resource: !Sub arn:aws:s3:::${DefectsResultsS3Bucket}/*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': 'false'
 
   S3UploaderFunction:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -162,7 +201,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Creates a S3 event notification to trigger a lambda when images are uploaded
-      CodeUri: ./functions/CreateS3BucketNotification /
+      CodeUri: ./functions/CreateS3BucketNotification/
       FunctionName: !Sub ${ResourcePrefix}-create-s3-event-notification
       Handler: lambda_function.handler
       Runtime: python3.7
@@ -228,6 +267,12 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       StreamSpecification: 
         StreamViewType: NEW_IMAGE
+      SSESpecification:
+        KMSMasterKeyId: alias/aws/dynamodb
+        SSEEnabled: true
+        SSEType: KMS
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
 
   DynamoDbToLambdaEventSourceMapping: 
     Type: "AWS::Lambda::EventSourceMapping"
@@ -308,6 +353,7 @@ Resources:
         - Endpoint: !Ref AlertsEmailAddress
           Protocol: "email"
       TopicName: !Sub ${ResourcePrefix}-detect-anomalies-topic
+      KmsMasterKeyId: alias/aws/sns
 
   DetectAnomaliesAlarm:
     Type: AWS::CloudWatch::Alarm
