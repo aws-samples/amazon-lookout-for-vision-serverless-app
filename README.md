@@ -39,7 +39,7 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
 ---------------
 
 <p align="center">
-  <img src="docs/architecture.jpg" alt="Architecture Diagram" />
+  <img src="docs/architecture-light.jpg" alt="Architecture Diagram" />
 </p>
 
 The architecture is composed of the following building blocks:
