@@ -140,10 +140,10 @@ You are responsible for the cost of the AWS services used while running this sam
 
 |Region|Launch Template|
 |------|---------------|
-|**US East (N. Virginia)** (us-east-1) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://aws.amazon.com/)|
-|**US East (Ohio)** (us-east-2) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://aws.amazon.com/)|
-|**US West (Oregon)** (us-west-2) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://aws.amazon.com/)|
-|**EU (Ireland)** (eu-west-1) | [![Launch the LookoutVisionDemo Stack with CloudFormation](docs/deploy-to-aws.png)](https://aws.amazon.com/)|
+|**US East (N. Virginia)** (us-east-1) | [![Launch the LookoutVisionApp Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=LookoutVisionApp&templateURL=https://solution-builders-us-east-1.s3.us-east-1.amazonaws.com/amazon-lookout-for-vision-serverless-app/latest/template.yaml)|
+|**US East (Ohio)** (us-east-2) | [![Launch the LookoutVisionApp Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=LookoutVisionApp&templateURL=https://solution-builders-us-east-2.s3.us-east-2.amazonaws.com/amazon-lookout-for-vision-serverless-app/latest/template.yaml)|
+|**US West (Oregon)** (us-west-2) | [![Launch the LookoutVisionApp Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=LookoutVisionApp&templateURL=https://solution-builders-us-west-2.s3.us-west-2.amazonaws.com/amazon-lookout-for-vision-serverless-app/latest/template.yaml)|
+|**EU (Ireland)** (eu-west-1) | [![Launch the LookoutVisionApp Stack with CloudFormation](docs/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=LookoutVisionApp&templateURL=https://solution-builders-eu-west-1.s3.eu-west-1.amazonaws.com/amazon-lookout-for-vision-serverless-app/latest/template.yaml)|
 
 2. If prompted, login using your AWS account credentials.
 3. You should see a screen titled "*Create Stack*" at the "*Specify template*" step. The fields specifying the CloudFormation template are pre-populated. Click the **Next** button at the bottom of the page.

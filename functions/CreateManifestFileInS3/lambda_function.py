@@ -38,9 +38,9 @@ def create_manifest_file(event, context):
         json_dump = json.dumps(data_set)
         print(json_dump)
         response = client.put_object(
-        Bucket = bucket_name,
-        Key = manifest_file_name,
-        Body = json_dump.encode('utf-8')
+            Bucket = bucket_name,
+            Key = manifest_file_name,
+            Body = json_dump.encode('utf-8')
         )
         print(response)
     except Exception as e:
@@ -53,8 +53,8 @@ def delete_manifest_file(event, context):
     manifest_file_name = event['ResourceProperties']['ManifestFileName']
     try:
         response = client.delete_object(
-        Bucket = bucket_name,
-        Key = manifest_file_name
+            Bucket = bucket_name,
+            Key = manifest_file_name
         )
         print(response)
     except Exception as e:
