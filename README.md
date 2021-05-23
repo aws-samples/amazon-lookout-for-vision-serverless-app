@@ -267,12 +267,12 @@ sh /path/to/test.sh
 ---------------
 #### Setup Quicksight Dashboard
 ---------------
+
+Refer to the blog post for steps to setup QuickSight resources.
+
 1. To setup QuickSight dashboard for the inference results, subscribe to a standard account via the AWS Console.
-
 2. Grant permissions to QuickSight to access the S3 bucket that stores the inference results. 
-
 3. Create a dataset by  specifying the manifest.json file uri stored in the same S3 bucket.
-
 4. Once dataset is imported, you can build visualizations as required and schedule dataset refresh.
 
 Note: Check output of the CloudFormation stack provisioned previously to identify the bucket and the manifest file URI.
@@ -280,13 +280,14 @@ Note: Check output of the CloudFormation stack provisioned previously to identif
 ---------------
 ### Removing the application
 ---------------
-Important Note:
-* Ensure that S3 buckets are empty before removing the application stack.
-* Quicksight dashboards and datasets can be deleted manually via the console.
+To cleanup the resources provisioned as part of the solution, you will need to carry out the following steps:
 
-To remove the application, open the AWS CloudFormation Console, click the **LookoutVisionServerlessApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
+1.	Ensure that the source and defects-results S3 buckets are empty – you can either [empty the buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/empty-bucket.html) via the console or [move the objects](https://aws.amazon.com/premiumsupport/knowledge-center/move-objects-s3-bucket/) to another bucket.
+2.	Delete the CloudFormaton stack
+Open the AWS CloudFormation Console, click the **LookoutVisionApp** project then right-click and select "*Delete Stack*". Your stack will take some time to be deleted. You can track its progress in the "*Events*" tab. Once the stack deletion is complete, the status will change from "*DELETE_IN_PROGRESS*" to "*DELETE_COMPLETE*". It will then disappear from the list.
 
-To remove the management front end, follow the steps listed [here](https://github.com/aws-samples/amazon-lookout-for-vision-demo#removing-the-demo-application)
+3.	Delete the management front end - follow the steps listed [here](https://github.com/aws-samples/amazon-lookout-for-vision-demo#removing-the-demo-application)
+4. Delete the Quicksight [dashboard](https://docs.aws.amazon.com/quicksight/latest/user/deleting-a-dashboard.html), [analysis](https://docs.aws.amazon.com/quicksight/latest/user/deleting-an-analysis.html) and [dataset](https://docs.aws.amazon.com/quicksight/latest/user/delete-a-data-set.html)
 
 ## Contributing
 
