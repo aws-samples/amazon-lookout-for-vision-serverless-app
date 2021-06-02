@@ -45,9 +45,9 @@ For more details, refer to the [blog post](https://aws.amazon.com/lookout-for-vi
 The architecture is composed of the following building blocks:
 * Image Ingestion and Storage - relies on [Amazon API Gateway](https://aws.amazon.com/api-gateway) and [AWS Lambda](https://aws.amazon.com/lambda) for the API, and  [Amazon S3](https://aws.amazon.com/s3) for image storage
 * Image Inference - relies on [Amazon Lookout for Vision](https://aws.amazon.com/lookout-for-vision) for image defect detection
-* Anomaly Detection Workflow* - uses [AWS Step Function](https://aws.amazon.com/step-functions) to orchestrate workflow
+* Defect Detection Workflow - uses [AWS Step Functions](https://aws.amazon.com/step-functions) to orchestrate workflow
 * Inference Results Persistence  - uses [Amazon DynamoDB](https://aws.amazon.com/dynamodb) to store inference results
-* Analytics - uses [Amazon Kinesis Firehose](https://aws.amazon.com/kinesis/data-firehose) to deliver results from DynamoDB to S3 and [Amazon QuickSight](https://aws.amazon.com/quicksight) to create insights dashboards
+* Analytics - uses [Amazon Kinesis Data Firehose](https://aws.amazon.com/kinesis/data-firehose) to deliver results from DynamoDB to S3 and [Amazon QuickSight](https://aws.amazon.com/quicksight) to create insights dashboards
 * Notifications - uses [Amazon Simple Notification Service](https://aws.amazon.com/sns) for sending email notifications to subscribed email address
 * Monitoring & Alerting - uses [Amazon CloudWatch](https://aws.amazon.com/cloudwatch) for monitoring workload metrics and alerting using alarms
 
@@ -105,8 +105,11 @@ Specifically, you will need to setup the following:
 4. Create the console bucket and copy the name for use later
 5. Setup [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 6. For local development, you can setup [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)(Optional)
-7. For testing, you require [Python](https://www.python.org/downloads/) >=v3.7
+7. For testing, you require [Python3](https://www.python.org/downloads/)
 8. Clone repository
+```
+git clone https://github.com/aws-samples/amazon-lookout-for-vision-serverless-app.git
+```
 9. Prepare sample images - you can get started with the images in the repository (../resources/circuitboard/) or prepare your own custom labeled dataset. Refer to [link](https://docs.aws.amazon.com/lookout-for-vision/latest/developer-guide/su-prepare-example-images.html) for more details
 
 If you choose to use the dataset that is part of the repository, then execute the following command after updating details of your S3 bucket to upload the images for training the model in Amazon Lookout for Vision.
@@ -207,7 +210,7 @@ your-repository-folder> sam deploy --guided
 Provide the parameter values as you are prompted to proceed through the provisioning process.
 
 **Troubleshooting**
-If you run into an issue where the resources are not created, or the stack rolls back - then please ensure you are using a random value for the *ResourcePrefix* parameter.
+* if you run into an issue where the resources are not created, or the stack rolls back - then please ensure you are using a random value for the *ResourcePrefix* parameter.
 
 ---------------
 #### Deploy Management Front End
@@ -226,7 +229,7 @@ To get started, refer to this [link](https://github.com/aws-samples/amazon-looko
 ---------------
 #### Testing
 ---------------
-**Ensure you have Python>=v3.7 installed before proceeding**
+**Ensure you have Python3 installed before proceeding**
 
 Follow the steps below to test functionality:
 
