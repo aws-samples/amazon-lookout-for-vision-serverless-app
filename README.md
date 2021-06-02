@@ -115,7 +115,7 @@ git clone https://github.com/aws-samples/amazon-lookout-for-vision-serverless-ap
 If you choose to use the dataset that is part of the repository, then execute the following command after updating details of your S3 bucket to upload the images for training the model in Amazon Lookout for Vision.
 
 ```
-terminal> aws s3 cp --recursive your-repository-folder/resources/circuitboard s3://your-lookout-for-vision-bucket/custom-dataset/circuitboard/
+aws s3 cp --recursive your-repository-folder/resources/circuitboard s3://your-lookout-for-vision-bucket/custom-dataset/circuitboard/
 ```
 
 
@@ -183,7 +183,7 @@ These directions assume you want to develop on your development environment or a
 
 To work on the sample code, you'll need to clone your project's repository to your local computer. If you haven't, do that first.
 
-1. Ensure you have [Python](https://www.python.org/downloads/) >= v3.7 installed
+1. Ensure you have [Python3](https://www.python.org/downloads/) installed
 2. Install [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) 
 3. Create a S3 Bucket for storing artefacts e.g. lambda code etc.
 4. Deploy the template using SAM CLI commands - run the [sam deploy](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html) command in the project root folder. 
@@ -193,18 +193,18 @@ To work on the sample code, you'll need to clone your project's repository to yo
 * region parameter should be where the Lookout For Vision model has been deployed.
 
 ```
-your-repository-folder> sam deploy --template template.yml --region <REGION> --s3-bucket <S3 BUCKET NAME>  --s3-prefix <S3 PREFIX> --capabilities "CAPABILITY_IAM" --parameter-overrides ResourcePrefix=<RESOURCEPREFIX> AlertsEmailAddress=<EMAIL ADDRESS> LookoutProjectName=<PROJECT NAME> LookoutModelVersion=<MODEL VERSION> --stack-name <STACK NAME>
+sam deploy --template template.yml --region <REGION> --s3-bucket <S3 BUCKET NAME>  --s3-prefix <S3 PREFIX> --capabilities "CAPABILITY_IAM" --parameter-overrides ResourcePrefix=<RESOURCEPREFIX> AlertsEmailAddress=<EMAIL ADDRESS> LookoutProjectName=<PROJECT NAME> LookoutModelVersion=<MODEL VERSION> --stack-name <STACK NAME>
 
 ```
 
 Example - deploying in Ireland region (eu-west-1)
 ```
-your-repository-folder> sam deploy --template template.yml --region eu-west-1 --s3-bucket sam-artefacts --s3-prefix lookoutforvision --capabilities "CAPABILITY_IAM" --parameter-overrides ResourcePrefix=lfv AlertsEmailAddress=abc@xyz.com  LookoutProjectName=lfvproject LookoutModelVersion=1 --stack-name lfv-stack
+sam deploy --template template.yml --region eu-west-1 --s3-bucket sam-artefacts --s3-prefix lookoutforvision --capabilities "CAPABILITY_IAM" --parameter-overrides ResourcePrefix=lfv AlertsEmailAddress=abc@xyz.com  LookoutProjectName=lfvproject LookoutModelVersion=1 --stack-name lfv-stack
 ```
 
 You can also use the guided execution process by using the following command:
 ```
-your-repository-folder> sam deploy --guided
+sam deploy --guided
 ```
 
 Provide the parameter values as you are prompted to proceed through the provisioning process.
@@ -234,13 +234,13 @@ To get started, refer to this [link](https://github.com/aws-samples/amazon-looko
 Follow the steps below to test functionality:
 
 1. Open terminal/command prompt 
-2. Install python 'requests' module - use command:
+2. Install python 'requests' module - execute command from the repository root folder:
    ```
-   your-repository-folder> pip3 install -t scripts/packages/ requests 
+   pip3 install -t scripts/packages/ requests 
    ```
-3. Execute the following to test image upload - update the parameter values before proceeding:
+3. Execute the following command from the repository root folder to test image upload - update the parameter values before proceeding:
    ```
-   your-repository-folder> python3 scripts/uploadImages.py <DIRECTORY> <CAMERA_ID> <ASSEMBLY_LINE_ID> <API_ENDPOINT> <AUTH_TOKEN> <TIME_BETWEEN_REQUESTS>
+   python3 scripts/uploadImages.py <DIRECTORY> <CAMERA_ID> <ASSEMBLY_LINE_ID> <API_ENDPOINT> <AUTH_TOKEN> <TIME_BETWEEN_REQUESTS>
    ```
 
 Example Inputs:
@@ -254,13 +254,13 @@ Example Inputs:
 For *ALLOWING* authorization to upload:
 
 ```
-your-repository-folder> python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
+python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl allow 0
 
 ```
 
 For *DENYING* authorization to upload:
 ```
-your-repository-folder> python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl deny 0
+python3 scripts/uploadImages.py resources/circuitboard/extra_images CAM123456 ASM123456 https://XYZ.amazonaws.com/Prod/getsignedurl deny 0
 ```
 
 Alternatively, you can also update the parameters in *test.sh* file and execute it via terminal/command prompt
