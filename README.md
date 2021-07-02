@@ -15,7 +15,7 @@ Features:
 * Notifications using Amazon SNS
 * Monitoring & Alerting using Amazon CloudWatch
 
-For more details, refer to the [blog post](https://aws-preview.aka.amazon.com/blogs/machine-learning/detect-manufacturing-defects-in-real-time-using-amazon-lookout-for-vision/)
+For more details, refer to the [blog post](https://aws.amazon.com/blogs/machine-learning/detect-manufacturing-defects-in-real-time-using-amazon-lookout-for-vision/)
 
 ---------------
 ### Index
@@ -271,7 +271,7 @@ sh /path/to/test.sh
 #### Setup Quicksight Dashboard
 ---------------
 
-Refer to the [blog post](https://aws-preview.aka.amazon.com/blogs/machine-learning/detect-manufacturing-defects-in-real-time-using-amazon-lookout-for-vision/) for steps to setup QuickSight resources.
+Refer to the [blog post](https://aws.amazon.com/blogs/machine-learning/detect-manufacturing-defects-in-real-time-using-amazon-lookout-for-vision/) for steps to setup QuickSight resources.
 
 1. To setup QuickSight dashboard for the inference results, subscribe to a standard account via the AWS Console.
 2. Grant permissions to QuickSight to access the S3 bucket that stores the inference results. 
