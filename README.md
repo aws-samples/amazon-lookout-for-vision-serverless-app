@@ -67,7 +67,7 @@ As records are added to DynamoDB, the streams configuration on the table sends N
 The S3 bucket that stores the results also contains a *manifest.json* file which can be used by QuickSight to identify the data to import from S3 and subsequently create visualizations and dashboards using that.
 
 **Notifications**
-Anomaly detection and low-confidence inference results trigger an email notification to be sent via an SNS topic. The topic is subscribed by an email address that can be passed as a parameter to the CloudFromation template.
+Anomaly detection and low-confidence inference results trigger an email notification to be sent via an SNS topic. The topic is subscribed by an email address that can be passed as a parameter to the CloudFormation template.
 
 **Monitoring & Alerting**
 Monitoring the state of the workload is managed via CloudWatch - as part of the solution, a dashboard is created which provides a single pane of glass for all metrics related to Lookout For Vision model as well as the Step Functions workflow. Additionally, an alarm is created which triggers whenever detected anomalies exceed a threshold and send sends an email notification via SNS.
