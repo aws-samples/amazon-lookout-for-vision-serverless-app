@@ -54,7 +54,7 @@ The architecture is composed of the following building blocks:
 
 
 **Image Ingestion**
-The solution flow starts from a camera or compute resource uploading an image by invoking the API to get a signed URL form Amazon S3. Additional metadata isassociated with the request e.g. Assembly Line ID, Camera ID. The call to the API is authorized using an authorization token via a custom lambda authorizer function. The signed URL received as part of the response is used to upload the image to a S3 bucket.
+The solution flow starts from a camera or compute resource uploading an image by invoking the API to get a signed URL form Amazon S3. Additional metadata is associated with the request e.g. Assembly Line ID, Camera ID. The call to the API is authorized using an authorization token via a custom lambda authorizer function. The signed URL received as part of the response is used to upload the image to a S3 bucket.
 
 **Anomaly Detection Workflow**
 As an image lands in the S3 bucket, an event is triggered which invokes a Lambda function to start a Step Functions workflow. The workflow carries out 3 steps:
@@ -64,13 +64,13 @@ As an image lands in the S3 bucket, an event is triggered which invokes a Lambda
 
 **Analytics**
 As records are added to DynamoDB, the streams configuration on the table sends NEW records to a stream from where they are read by a Lambda function which transforms the received JSON and then puts the transformed record in Kinesis Firehose Delivery Stream. Kinesis Firehose batches up the received records and stores them in another S3 bucket.
-The S3 bucket that stores the results also contains a *manifest.json* file whihc can be used by QuickSigh to identify the data to import from S3 and subsequeently create visualizations and dashboards using that.
+The S3 bucket that stores the results also contains a *manifest.json* file which can be used by QuickSight to identify the data to import from S3 and subsequently create visualizations and dashboards using that.
 
 **Notifications**
-Anomaly detection and low-confidence inference results trigger an email notificaton to be sent via an SNS topic. The topic is sibscribed by an email address that can be passed as a parameter to the CloudFromation template.
+Anomaly detection and low-confidence inference results trigger an email notification to be sent via an SNS topic. The topic is subscribed by an email address that can be passed as a parameter to the CloudFromation template.
 
 **Monitoring & Alerting**
-Monitoring the state of the workload is managed via CloudWatch - as part of the solution, a dashboard is created which provides a single pane of glass for all metrics related to Lookout For Vision model as well as the Step Functions workflow. Additionally, an alarm is created whihc triggers whenever detected anomalies exceed a threshold and send sends an email notification via SNS.
+Monitoring the state of the workload is managed via CloudWatch - as part of the solution, a dashboard is created which provides a single pane of glass for all metrics related to Lookout For Vision model as well as the Step Functions workflow. Additionally, an alarm is created which triggers whenever detected anomalies exceed a threshold and send sends an email notification via SNS.
 
 ---------------
 ### What's Here
