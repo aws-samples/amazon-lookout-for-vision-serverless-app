@@ -146,7 +146,7 @@ Resources:
       FunctionName: !Sub ${ResourcePrefix}-s3-getsignedurl
       CodeUri: ./functions/S3UploaderFunction/
       Handler: app.handler
-      Runtime: nodejs16.x
+      Runtime: nodejs12.x
       MemorySize: 128
       Tracing: Active
       Environment:
@@ -176,7 +176,7 @@ Resources:
         FunctionName: !Sub ${ResourcePrefix}-apigw-custom-authorizer
         CodeUri: ./functions/ApiGwCustomAuthorizer/
         Handler: app.handler
-        Runtime: nodejs16.x
+        Runtime: nodejs12.x
         MemorySize: 128
   
   CreateManifestFileFunction:
