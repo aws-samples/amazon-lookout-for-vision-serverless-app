@@ -9,7 +9,7 @@ Globals:
     Environment:
       Variables:
         REGION: !Ref AWS::Region
-        VERSION: "0.1"
+        VERSION: "0.2"
 
   Api:
     # Allows any site to call these APIs (can restrict by replacing asterisk with site name)

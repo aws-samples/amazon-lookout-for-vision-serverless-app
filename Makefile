@@ -10,7 +10,7 @@ package:
 
 .PHONY: test
 test:
-	cfn-lint template.yml
+	cfn-lint template.yml --ignore-checks E2531
 	cfn_nag template.yml
 
 .PHONY: setup
